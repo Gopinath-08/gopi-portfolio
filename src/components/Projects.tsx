@@ -4,37 +4,15 @@ import { ExternalLink, Github } from 'lucide-react';
 
 const projects = [
   {
-    title: 'E-Commerce Platform',
-    description: 'A full-featured e-commerce solution with real-time inventory, payment processing, and admin dashboard.',
+    title: 'lorem',
+    description: 'Officia magna enim consequat ex.Deserunt fugiat do sunt labore irure aute qui incididunt labore enim sunt. Laboris cillum et deserunt dolore do et aliquip. Culpa Lorem ipsum occaecat culpa culpa.',
     tags: ['Next.js', 'TypeScript', 'Stripe', 'PostgreSQL'],
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
     liveUrl: '#',
     githubUrl: '#',
   },
-  {
-    title: 'AI Writing Assistant',
-    description: 'An intelligent writing tool powered by GPT-4, helping users create better content faster.',
-    tags: ['React', 'Python', 'OpenAI', 'FastAPI'],
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop',
-    liveUrl: '#',
-    githubUrl: '#',
-  },
-  {
-    title: 'Real-Time Analytics',
-    description: 'A dashboard for visualizing complex data streams with interactive charts and custom reports.',
-    tags: ['React', 'D3.js', 'Node.js', 'WebSocket'],
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-    liveUrl: '#',
-    githubUrl: '#',
-  },
-  {
-    title: 'Healthcare App',
-    description: 'A telemedicine platform connecting patients with healthcare providers through video consultations.',
-    tags: ['React Native', 'Node.js', 'WebRTC', 'MongoDB'],
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop',
-    liveUrl: '#',
-    githubUrl: '#',
-  },
+  
+ 
 ];
 
 const Projects = () => {

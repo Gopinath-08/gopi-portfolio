@@ -54,7 +54,7 @@ const Hero = () => {
               variants={itemVariants}
               className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 leading-relaxed"
             >
-              I craft exceptional digital experiences with 8+ years of expertise in building scalable web applications. Let's turn your vision into reality.
+              I craft exceptional digital experiences with 2+ years of expertise in building scalable web applications. Let's turn your vision into reality.
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-wrap gap-4 mb-10">

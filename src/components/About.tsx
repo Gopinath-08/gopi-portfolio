@@ -4,10 +4,10 @@ import { useRef } from 'react';
 import { Code2, Lightbulb, Rocket, Users } from 'lucide-react';
 
 const stats = [
-  { value: '8+', label: 'Years Experience' },
-  { value: '100+', label: 'Projects Completed' },
-  { value: '50+', label: 'Happy Clients' },
-  { value: '15+', label: 'Awards Won' },
+  { value: '2+', label: 'Years Experience' },
+  { value: '50+', label: 'Projects Completed' },
+  { value: '10+', label: 'Happy Clients' },
+  { value: '5+', label: 'Awards Won' },
 ];
 
 const values = [
@@ -52,7 +52,7 @@ const About = () => {
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
             I'm a full-stack developer based in San Francisco with a passion for building exceptional digital experiences. 
-            My journey in tech started 8 years ago, and since then I've had the privilege of working with startups, 
+            My journey in tech started 5 years ago, and since then I've had the privilege of working with startups, 
             agencies, and large corporations to bring their visions to life.
           </p>
         </motion.div>
