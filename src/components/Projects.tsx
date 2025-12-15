@@ -4,12 +4,20 @@ import { ExternalLink, Github } from 'lucide-react';
 
 const projects = [
   {
-    title: 'lorem',
-    description: 'Officia magna enim consequat ex.Deserunt fugiat do sunt labore irure aute qui incididunt labore enim sunt. Laboris cillum et deserunt dolore do et aliquip. Culpa Lorem ipsum occaecat culpa culpa.',
-    tags: ['Next.js', 'TypeScript', 'Stripe', 'PostgreSQL'],
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
-    liveUrl: '#',
-    githubUrl: '#',
+    title: 'Prompty App',
+    description: 'Prompty helps you discover, save, and use powerful AI prompts with ease. Explore curated prompts that boost creativity, productivity, and better results across ChatGPT and other AI tools—all in a clean, intuitive experience.',
+    tags: ['React Native', 'TypeScript', 'Express', 'MongoDB'],
+    image: 'https://play-lh.googleusercontent.com/Z0KWpAZm31-5hDdt3Q1Ofcuf1KIlmZ0Df8ZXbpvl9tUj-d5u2AQcQzNwf8zM81N-lQFTWVrge-YrLvDYVl48=w832-h470-rw',
+    liveUrl: 'https://play.google.com/store/apps/details?id=com.prompty.app',
+    githubUrl: 'https://github.com/Gopinath-08',
+  },
+  {
+    title: 'Prompty App',
+    description: 'Prompty helps you discover, save, and use powerful AI prompts with ease. Explore curated prompts that boost creativity, productivity, and better results across ChatGPT and other AI tools—all in a clean, intuitive experience.',
+    tags: ['React Native', 'TypeScript', 'Express', 'MongoDB'],
+    image: 'https://play-lh.googleusercontent.com/Z0KWpAZm31-5hDdt3Q1Ofcuf1KIlmZ0Df8ZXbpvl9tUj-d5u2AQcQzNwf8zM81N-lQFTWVrge-YrLvDYVl48=w832-h470-rw',
+    liveUrl: 'https://play.google.com/store/apps/details?id=com.prompty.app',
+    githubUrl: 'https://github.com/Gopinath-08',
   },
   
  

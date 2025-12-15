@@ -2,14 +2,14 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 
 const skills = [
-  { name: 'React / Next.js', level: 95, category: 'Frontend' },
-  { name: 'TypeScript', level: 92, category: 'Frontend' },
+  { name: 'React / React Native', level: 80, category: 'Frontend' },
+  { name: 'JavaScript / TypeScript', level: 80, category: 'Frontend' },
   { name: 'Node.js', level: 88, category: 'Backend' },
-  { name: 'Python', level: 85, category: 'Backend' },
-  { name: 'PostgreSQL', level: 87, category: 'Database' },
-  { name: 'AWS / GCP', level: 82, category: 'DevOps' },
+  { name: 'Python / C++', level: 85, category: 'Backend' },
+  { name: 'MongoDB', level: 87, category: 'Database' },
+  { name: 'AWS / GCP / JWT', level: 82, category: 'DevOps' },
   { name: 'Docker', level: 80, category: 'DevOps' },
-  { name: 'GraphQL', level: 85, category: 'API' },
+  { name: 'RESTFull', level: 85, category: 'API' },
 ];
 
 const technologies = [

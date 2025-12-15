@@ -51,9 +51,7 @@ const About = () => {
             Passionate About Creating <span className="text-gradient-accent">Digital Excellence</span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            I'm a full-stack developer based in San Francisco with a passion for building exceptional digital experiences. 
-            My journey in tech started 5 years ago, and since then I've had the privilege of working with startups, 
-            agencies, and large corporations to bring their visions to life.
+            I’m a Software Developer based in Balangir, Odisha. I build smart, user-focused web and mobile applications by combining modern technologies like React, Node.js, and React Native with real-world systems. I’m passionate about turning ideas into scalable, impactful digital solutions through clean code and hands-on engineering.
           </p>
         </motion.div>
 
