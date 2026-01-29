@@ -1,7 +1,10 @@
-// Use proxy in development if VITE_API_URL is not set, otherwise use the provided URL
+// API Base URL configuration
+// Priority: 1. VITE_API_URL env variable, 2. Production URL, 3. Proxy for development
 const API_BASE_URL = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL}/api`
-  : '/api';
+  : import.meta.env.PROD
+  ? 'https://gopi-backend-mpjh.onrender.com/api'
+  : 'https://gopi-backend-mpjh.onrender.com/api'; // Use production API URL
 
 export interface ApiError {
   status: string;
