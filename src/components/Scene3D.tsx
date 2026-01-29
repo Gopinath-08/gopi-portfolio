@@ -1,6 +1,6 @@
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, MeshWobbleMaterial, Sphere, Torus, Box } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Float, MeshDistortMaterial, MeshWobbleMaterial, Sphere, Torus, Box, OrbitControls, Stars } from '@react-three/drei';
+import { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 
 interface AnimatedShapeProps {
@@ -101,6 +101,32 @@ const AnimatedBox = ({ position, color, speed = 1 }: AnimatedShapeProps) => {
   );
 };
 
+// Interactive camera that follows mouse
+const InteractiveCamera = () => {
+  const { camera } = useThree();
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current = {
+        x: (e.clientX / window.innerWidth) * 2 - 1,
+        y: -(e.clientY / window.innerHeight) * 2 + 1,
+      };
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  useFrame(() => {
+    camera.position.x += (mouseRef.current.x * 2 - camera.position.x) * 0.05;
+    camera.position.y += (mouseRef.current.y * 2 - camera.position.y) * 0.05;
+    camera.lookAt(0, 0, 0);
+  });
+
+  return null;
+};
+
 const Scene3D = () => {
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -108,15 +134,22 @@ const Scene3D = () => {
         camera={{ position: [0, 0, 10], fov: 45 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <pointLight position={[-10, -10, -5]} intensity={0.5} color="#e07a4f" />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={1.2} />
+        <pointLight position={[-10, -10, -5]} intensity={0.8} color="#e07a4f" />
+        <pointLight position={[10, 10, 5]} intensity={0.6} color="#3d9a8b" />
+        
+        <Stars radius={300} depth={50} count={2000} factor={4} fade speed={1} />
+        
+        <InteractiveCamera />
         
         <AnimatedSphere position={[-4, 2, -2]} color="#e07a4f" speed={0.8} />
         <AnimatedTorus position={[4, -1, -3]} color="#3d9a8b" speed={1.2} />
         <AnimatedBox position={[5, 3, -4]} color="#1e3a5f" speed={0.6} />
         <AnimatedSphere position={[-5, -2, -5]} color="#f4a261" speed={1} />
         <AnimatedTorus position={[-2, 3, -6]} color="#264653" speed={0.7} />
+        <AnimatedBox position={[0, -3, -4]} color="#e07a4f" speed={0.9} />
+        <AnimatedSphere position={[3, 4, -3]} color="#f4a261" speed={1.1} />
       </Canvas>
     </div>
   );

@@ -8,169 +8,141 @@ const Hero = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
+      transition: { duration: 0.5 },
     },
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-hero">
-      <div className="container mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-left z-10"
-          >
-            <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm font-medium text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                Available for freelance
-              </span>
-            </motion.div>
-
-            <motion.h1
-              variants={itemVariants}
-              className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-foreground leading-tight mb-6"
+    <section id="home" className="relative min-h-screen flex items-center pt-20">
+      <div className="container mx-auto px-6 py-20 relative z-10">
+        {/* Asymmetric layout - content offset left */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-[1.3fr_1fr] gap-16 items-center">
+            {/* Content - intentionally left-aligned, not centered */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="text-left"
             >
-              Hi, I'm <span className="text-gradient-accent">Gopinath</span>
-              <br />
-              <span className="text-muted-foreground">Full-Stack Developer</span>
-            </motion.h1>
 
-            <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 leading-relaxed"
-            >
-              I craft exceptional digital experiences with 2+ years of expertise in building scalable web applications. Let's turn your vision into reality.
-            </motion.p>
-
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-4 mb-10">
-              <motion.a
-                href="#contact"
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold shadow-glow hover:shadow-elevated transition-all duration-300"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
+              <motion.h1
+                variants={itemVariants}
+                className="text-6xl md:text-7xl lg:text-8xl font-serif text-foreground leading-[0.95] mb-8 tracking-tight"
+                style={{ fontFeatureSettings: '"liga" 1, "kern" 1' }}
               >
-                Start a Project
-              </motion.a>
-              <motion.a
-                href="#projects"
-                className="px-8 py-4 bg-card border border-border text-foreground rounded-full font-semibold hover:bg-muted transition-colors duration-300"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                View Work
-              </motion.a>
-            </motion.div>
+                <span className="block">Gopinath</span>
+                <span className="block text-primary">Majhi</span>
+                <span className="block text-3xl md:text-4xl lg:text-5xl font-sans font-normal text-accent mt-4 tracking-normal">
+                  Full-Stack Developer
+                </span>
+              </motion.h1>
 
-            <motion.div variants={itemVariants} className="flex items-center gap-6">
-              {[
-                { Icon: Github, href: 'https://github.com/Gopinath-08' },
-                { Icon: Linkedin, href: 'https://www.linkedin.com/in/gopinath-majhi-76b0b81b8' },
-                { Icon: Twitter, href: 'https://x.com/GopinathMajhi13' },
-              ].map(({ Icon, href }) => (
+              <motion.p
+                variants={itemVariants}
+                className="text-lg md:text-xl text-foreground/80 max-w-2xl mb-10 leading-relaxed font-sans"
+                style={{ maxWidth: '32rem' }}
+              >
+                Building web and mobile applications with modern technologies. 
+                Focused on clean architecture, performance, and meaningful user experiences.
+              </motion.p>
+
+              <motion.div variants={itemVariants} className="flex items-center gap-6 mb-12">
                 <motion.a
-                  key={href}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  href="#contact"
+                  className="px-8 py-3 bg-primary text-primary-foreground font-sans font-medium hover:bg-primary/90 transition-colors inline-flex items-center gap-2"
+                  whileHover={{ x: 2 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Icon size={20} />
+                  Contact
+                  <span className="text-sm">→</span>
                 </motion.a>
-              ))}
-            </motion.div>
-          </motion.div>
+                <motion.a
+                  href="#projects"
+                  className="px-8 py-3 border-2 border-foreground text-foreground font-sans font-medium hover:bg-foreground hover:text-background transition-all inline-flex items-center gap-2"
+                  whileHover={{ x: 2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Projects
+                  <span className="text-sm">→</span>
+                </motion.a>
+              </motion.div>
 
-          {/* Profile Image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, x: 50 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
-            className="relative flex justify-center lg:justify-end z-10"
-          >
-            <div className="relative">
-              {/* Decorative rings */}
-              <motion.div
-                className="absolute -inset-4 border-2 border-primary/20 rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              />
-              <motion.div
-                className="absolute -inset-8 border border-accent/10 rounded-full"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-              />
-              
-              {/* Profile container */}
-              <motion.div
-                className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden shadow-elevated"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 z-10" />
+              <motion.div variants={itemVariants} className="pt-8 border-t border-border/50">
+                <div className="flex items-center gap-6">
+                  <span className="text-xs font-mono uppercase tracking-wider text-foreground/50">Connect</span>
+                  <div className="flex items-center gap-4">
+                    {[
+                      { Icon: Github, href: 'https://github.com/Gopinath-08', label: 'GitHub' },
+                      { Icon: Linkedin, href: 'https://www.linkedin.com/in/gopinath-majhi-76b0b81b8', label: 'LinkedIn' },
+                      { Icon: Twitter, href: 'https://x.com/GopinathMajhi13', label: 'Twitter' },
+                    ].map(({ Icon, href, label }) => (
+                      <motion.a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg border border-border/50 hover:border-primary hover:bg-primary/10 text-foreground/60 hover:text-primary transition-all"
+                        whileHover={{ y: -2, scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        aria-label={label}
+                      >
+                        <Icon size={18} />
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Profile Image - Right side, clean */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="relative"
+            >
+              <div className="relative w-full aspect-square max-w-md mx-auto">
                 <img
                   src={profileImage}
-                  alt="John Doe - Full-Stack Developer"
-                  className="w-full h-full object-cover"
+                  alt="Gopinath Majhi"
+                  className="w-full h-full object-cover rounded-lg border border-border"
                 />
-              </motion.div>
-
-              {/* Floating badge */}
-              <motion.div
-                className="absolute -bottom-4 -right-4 px-4 py-2 bg-card border border-border rounded-2xl shadow-card"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
-              >
-                <p className="text-sm font-semibold text-foreground">2+ Years</p>
-                <p className="text-xs text-muted-foreground">Experience</p>
-              </motion.div>
-
-              {/* Floating tech badge */}
-              <motion.div
-                className="absolute top-4 -left-8 px-4 py-2 bg-primary text-primary-foreground rounded-2xl shadow-glow"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.2, duration: 0.5 }}
-              >
-                <p className="text-sm font-semibold">50+ Projects</p>
-              </motion.div>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator - minimal, editorial style */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-12 left-6"
         >
-          <motion.a
+          <a
             href="#about"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center gap-2 text-foreground/50 hover:text-foreground transition-colors group"
           >
-            <span className="text-sm font-medium">Scroll</span>
-            <ArrowDown size={20} />
-          </motion.a>
+            <span className="text-xs font-mono uppercase tracking-wider">Scroll</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ArrowDown size={18} className="text-primary" />
+            </motion.div>
+          </a>
         </motion.div>
       </div>
     </section>

@@ -1,7 +1,8 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, Send, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { apiClient } from '@/lib/api';
 
 const Contact = () => {
   const ref = useRef(null);
@@ -11,11 +12,22 @@ const Contact = () => {
     email: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Message sent! I\'ll get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const response = await apiClient.sendContactMessage(formData);
+      toast.success(response.message || 'Message sent! I\'ll get back to you soon.');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -25,66 +37,61 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-24 bg-background" ref={ref}>
+    <section id="contact" className="py-32 bg-background relative" ref={ref}>
       <div className="container mx-auto px-6">
+        {/* Asymmetric header */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center mb-16"
+          initial={{ opacity: 0, x: -30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mb-20"
         >
-          <span className="text-primary font-medium text-sm uppercase tracking-wider">Contact</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4 mb-6">
-            Let's Work <span className="text-gradient-accent">Together</span>
+          <h2 className="text-6xl md:text-7xl font-serif text-foreground mb-8 leading-tight tracking-tight">
+            Contact
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Have a project in mind? I'd love to hear from you. Send me a message and let's create something amazing.
+          <p className="text-lg text-foreground/90 max-w-2xl font-sans leading-relaxed">
+            Have a project in mind? Let's discuss how we can work together.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
-          {/* Contact Info */}
+        <div className="grid lg:grid-cols-[1fr_1.5fr] gap-16 max-w-6xl mx-auto">
+          {/* Contact Info - Editorial style */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-2 space-y-8"
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-10"
           >
             <div>
-              <h3 className="text-2xl font-display font-semibold text-foreground mb-6">Get in Touch</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Whether you have a question or just want to say hi, my inbox is always open. I'll try my best to get back to you!
+              <h3 className="text-sm font-mono uppercase tracking-wider text-foreground/50 mb-4">Reach Out</h3>
+              <p className="text-foreground/80 leading-relaxed font-sans">
+                Always open to discussing new projects, ideas, or opportunities.
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {contactInfo.map((info, index) => (
                 <motion.div
                   key={info.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-4 p-4 bg-card rounded-xl border border-border hover:border-primary transition-colors duration-300"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className="border-l-2 border-accent pl-6 py-2"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <info.icon size={20} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{info.label}</p>
-                    <p className="font-medium text-foreground">{info.value}</p>
-                  </div>
+                  <p className="text-xs font-mono uppercase tracking-wider text-primary mb-1">{info.label}</p>
+                  <p className="font-sans text-foreground font-medium">{info.value}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Contact Form - Clean, structured */}
           <motion.form
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             onSubmit={handleSubmit}
-            className="lg:col-span-3 bg-card rounded-3xl p-8 shadow-card"
+            className="bg-card p-8 border-2 border-primary/20"
           >
             <div className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
@@ -98,7 +105,7 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300 text-foreground"
+                    className="w-full px-4 py-3 bg-background border border-border focus:outline-none focus:border-primary transition-colors text-foreground font-sans"
                     placeholder="Your name"
                   />
                 </div>
@@ -112,7 +119,7 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300 text-foreground"
+                    className="w-full px-4 py-3 bg-background border border-border focus:outline-none focus:border-primary transition-colors text-foreground font-sans"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -133,12 +140,22 @@ const Contact = () => {
               </div>
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 shadow-glow hover:shadow-elevated transition-all duration-300"
+                disabled={isSubmitting}
+                whileHover={!isSubmitting ? { scale: 1.02, y: -2 } : {}}
+                whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                  className="w-full py-4 bg-primary text-primary-foreground font-sans font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send size={18} />
-                Send Message
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send size={18} />
+                    Send Message
+                  </>
+                )}
               </motion.button>
             </div>
           </motion.form>

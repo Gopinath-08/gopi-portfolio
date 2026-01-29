@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 const navItems = [
   { label: 'Home', href: '#home' },
@@ -17,18 +18,18 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border"
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <motion.a
             href="#home"
-            className="text-2xl font-display font-bold text-foreground"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="text-lg font-serif text-primary hover:text-accent transition-colors"
+            whileHover={{ x: 2 }}
+            whileTap={{ scale: 0.98 }}
           >
-            GM<span className="text-primary">.</span>
+            G.M
           </motion.a>
 
           {/* Desktop Navigation */}
@@ -42,31 +43,38 @@ const Navbar = () => {
               >
                 <a
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium link-underline"
+                  className="text-foreground/70 hover:text-primary transition-colors font-sans text-sm uppercase tracking-wider relative group"
                 >
                   {item.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
                 </a>
               </motion.li>
             ))}
           </ul>
 
-          {/* Contact Button */}
-          <motion.a
-            href="#contact"
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground rounded-full font-medium hover:bg-secondary/90 transition-colors duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Let's Talk
-          </motion.a>
+          {/* Right side: Theme Toggle and Contact Button */}
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            <motion.a
+              href="#contact"
+              className="px-6 py-2.5 bg-primary text-primary-foreground font-sans text-sm font-medium hover:bg-primary/90 transition-colors"
+              whileHover={{ x: 2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Contact →
+            </motion.a>
+          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-foreground"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: Theme Toggle and Menu Button */}
+          <div className="md:hidden flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 text-foreground"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -93,7 +101,7 @@ const Navbar = () => {
                 <a
                   href="#contact"
                   onClick={() => setIsOpen(false)}
-                  className="inline-block px-5 py-2.5 bg-secondary text-secondary-foreground rounded-full font-medium"
+                  className="inline-block px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-medium"
                 >
                   Let's Talk
                 </a>

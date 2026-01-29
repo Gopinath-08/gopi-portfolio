@@ -1,7 +1,10 @@
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api';
 
-const skills = [
+// Default skills as fallback
+const defaultSkills = [
   { name: 'React / React Native', level: 80, category: 'Frontend' },
   { name: 'JavaScript / TypeScript', level: 80, category: 'Frontend' },
   { name: 'Node.js', level: 88, category: 'Backend' },
@@ -12,7 +15,7 @@ const skills = [
   { name: 'RESTFull', level: 85, category: 'API' },
 ];
 
-const technologies = [
+const defaultTechnologies = [
   'React', 'Next.js', 'TypeScript', 'Node.js', 'Python', 'Go',
   'PostgreSQL', 'MongoDB', 'Redis', 'GraphQL', 'REST APIs',
   'AWS', 'GCP', 'Docker', 'Kubernetes', 'CI/CD',
@@ -23,69 +26,125 @@ const Skills = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
+  const { data: githubStats } = useQuery({
+    queryKey: ['github-stats'],
+    queryFn: async () => {
+      const response = await apiClient.getGitHubStats();
+      return response.data;
+    },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    retry: 1,
+  });
+
+  // Calculate skill levels based on GitHub language usage
+  const skills = useMemo(() => {
+    if (!githubStats?.languages) return defaultSkills;
+
+    const languageCounts = githubStats.languages;
+    const totalRepos = Object.values(languageCounts).reduce((sum, count) => sum + count, 0);
+    
+    // Map GitHub languages to skills with calculated levels
+    const languageMap: Record<string, { name: string; category: string }> = {
+      'JavaScript': { name: 'JavaScript / TypeScript', category: 'Frontend' },
+      'TypeScript': { name: 'JavaScript / TypeScript', category: 'Frontend' },
+      'React': { name: 'React / React Native', category: 'Frontend' },
+      'Python': { name: 'Python / C++', category: 'Backend' },
+      'Java': { name: 'Java', category: 'Backend' },
+      'Go': { name: 'Go', category: 'Backend' },
+    };
+
+    const skillMap = new Map<string, { name: string; level: number; category: string }>();
+
+    Object.entries(languageCounts).forEach(([lang, count]) => {
+      const mapped = languageMap[lang] || { name: lang, category: 'Other' };
+      const percentage = Math.round((count / totalRepos) * 100);
+      const level = Math.min(95, Math.max(60, percentage * 10)); // Scale to 60-95 range
+
+      const existing = skillMap.get(mapped.name);
+      if (!existing || existing.level < level) {
+        skillMap.set(mapped.name, { ...mapped, level });
+      }
+    });
+
+    // Combine with default skills, prioritizing GitHub data
+    const combined = [...Array.from(skillMap.values()), ...defaultSkills];
+    const unique = Array.from(
+      new Map(combined.map(skill => [skill.name, skill])).values()
+    );
+
+    return unique.slice(0, 8); // Limit to 8 skills
+  }, [githubStats]);
+
+  // Build technologies list from GitHub languages + defaults
+  const technologies = useMemo(() => {
+    if (!githubStats?.languages) return defaultTechnologies;
+
+    const githubLangs = Object.keys(githubStats.languages);
+    const combined = [...githubLangs, ...defaultTechnologies];
+    return Array.from(new Set(combined)).slice(0, 20); // Limit to 20 technologies
+  }, [githubStats]);
+
   return (
-    <section id="skills" className="py-24 bg-background" ref={ref}>
+    <section id="skills" className="py-32 bg-background relative" ref={ref}>
       <div className="container mx-auto px-6">
+        {/* Asymmetric header */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center mb-16"
+          initial={{ opacity: 0, x: -30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mb-20"
         >
-          <span className="text-primary font-medium text-sm uppercase tracking-wider">Skills</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4 mb-6">
-            Technical <span className="text-gradient-accent">Expertise</span>
+          <h2 className="text-6xl md:text-7xl font-serif text-foreground mb-8 leading-tight tracking-tight">
+            Skills
           </h2>
-          <p className="text-lg text-muted-foreground">
-            A comprehensive toolkit built over years of hands-on experience with modern technologies.
+          <p className="text-lg text-foreground/90 max-w-2xl font-sans leading-relaxed">
+            Technologies and tools I use to build production applications.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          {/* Skill Bars */}
-          <div className="space-y-6">
+        <div className="grid lg:grid-cols-[1.5fr_1fr] gap-20 items-start">
+          {/* Skill Bars - Editorial style */}
+          <div className="space-y-8">
             {skills.map((skill, index) => (
               <motion.div
                 key={skill.name}
-                initial={{ opacity: 0, x: -40 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
+                transition={{ duration: 0.6, delay: 0.2 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="border-l-2 border-accent pl-6"
               >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium text-foreground">{skill.name}</span>
-                  <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                <div className="flex justify-between items-baseline mb-3">
+                  <span className="font-sans font-medium text-foreground text-sm uppercase tracking-wider">{skill.name}</span>
+                  <span className="text-xs font-mono text-primary font-bold">{skill.level}%</span>
                 </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden">
+                <div className="h-1.5 bg-muted overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={isInView ? { width: `${skill.level}%` } : {}}
-                    transition={{ duration: 1, delay: 0.3 + index * 0.1, ease: 'easeOut' }}
-                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                    transition={{ duration: 1.2, delay: 0.4 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="h-full bg-primary"
                   />
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* Technology Tags */}
+          {/* Technology Tags - Minimal, structured */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="sticky top-24"
           >
-            <h3 className="text-2xl font-display font-semibold text-foreground mb-6">Technologies I Work With</h3>
-            <div className="flex flex-wrap gap-3">
-              {technologies.map((tech, index) => (
-                <motion.span
+            <h3 className="text-sm font-mono uppercase tracking-wider text-foreground/50 mb-6">Technologies</h3>
+            <div className="flex flex-wrap gap-2">
+              {technologies.map((tech) => (
+                <span
                   key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.3, delay: 0.4 + index * 0.03 }}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="px-4 py-2 bg-card border border-border rounded-full text-sm font-medium text-foreground hover:border-primary hover:shadow-soft transition-all duration-300 cursor-default"
+                  className="px-3 py-1.5 bg-card border border-primary/30 text-xs font-mono text-foreground/80 hover:border-primary hover:bg-primary/10 hover:text-primary transition-colors"
                 >
                   {tech}
-                </motion.span>
+                </span>
               ))}
             </div>
           </motion.div>
