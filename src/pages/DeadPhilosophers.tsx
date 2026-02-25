@@ -7,8 +7,10 @@ import styles from './DeadPhilosophers.module.css';
 
 type Message = { role: 'user' | 'assistant'; content: string; timestamp?: string };
 
-const INDIAN_IDS: PhilosopherId[] = ['chanakya', 'shankaracharya', 'vivekananda', 'nagarjuna'];
+const KRISHNA_ID: PhilosopherId = 'krishna';
+const INDIAN_PHILOSOPHER_IDS: PhilosopherId[] = ['chanakya', 'shankaracharya', 'vivekananda', 'nagarjuna'];
 const WESTERN_IDS: PhilosopherId[] = ['aristotle', 'socrates', 'nietzsche', 'camus'];
+const ALL_PHILOSOPHER_IDS: PhilosopherId[] = [...INDIAN_PHILOSOPHER_IDS, ...WESTERN_IDS];
 
 function escapeHtml(text: string): string {
   return text
@@ -114,7 +116,7 @@ const DeadPhilosophers = () => {
         [currentPhil]: [...(prev[currentPhil] ?? []), assistantMsg],
       }));
     } catch {
-      const errMsg = `*The summoning was interrupted by a disturbance in the ether.*\n\nI apologize — it seems the connection to the beyond was disrupted. Please try again.`;
+      const errMsg = `*The connection was interrupted.*\n\nI apologize — something went wrong on the way. Please try again.`;
       const assistantMsg: Message = { role: 'assistant', content: errMsg, timestamp: '—' };
       setChatHistory((prev) => ({
         ...prev,
@@ -148,8 +150,15 @@ const DeadPhilosophers = () => {
 
       <div className={styles.grid}>
         <aside className={styles.sidebar}>
-          <div className={styles.sidebarLabel}>Choose Your Philosopher</div>
-          {INDIAN_IDS.map((id) => (
+          <div className={styles.sidebarLabel}>Krishna</div>
+          <PhilosopherCard
+            philosopher={PHILOSOPHERS[KRISHNA_ID]}
+            isActive={currentPhil === KRISHNA_ID}
+            onSelect={() => selectPhilosopher(KRISHNA_ID)}
+          />
+          <div className={styles.sidebarDivider} />
+          <div className={styles.sidebarLabel}>Indian Philosophers</div>
+          {INDIAN_PHILOSOPHER_IDS.map((id) => (
             <PhilosopherCard
               key={id}
               philosopher={PHILOSOPHERS[id]}
@@ -158,7 +167,7 @@ const DeadPhilosophers = () => {
             />
           ))}
           <div className={styles.sidebarDivider} />
-          <div className={styles.sidebarLabel} style={{ paddingTop: 10 }}>Greek & Western</div>
+          <div className={styles.sidebarLabel}>Greek & Western</div>
           {WESTERN_IDS.map((id) => (
             <PhilosopherCard
               key={id}
@@ -178,7 +187,7 @@ const DeadPhilosophers = () => {
                 <div className={styles.philHeaderTagline}>{phil.tagline}</div>
                 <div className={styles.philStatus}>
                   <span className={styles.statusDot} />
-                  Summoned from beyond
+                  Here to guide
                 </div>
               </div>
               <button
@@ -194,12 +203,20 @@ const DeadPhilosophers = () => {
 
           {!currentPhil && (
             <div className={styles.welcomeScreen}>
-              <h2 className={styles.welcomeH2}>Chat with a Philosopher</h2>
+              <h2 className={styles.welcomeH2}>Chat with Krishna or a Philosopher</h2>
               <p className={styles.welcomeP}>
-                Get advice from ancient thinkers on modern problems. Pick one below to start the conversation.
+                Talk to Krishna (from the Bhagavad Gita) or to philosophers. Pick one below to start.
               </p>
+              <div className={styles.welcomeKrishnaWrap}>
+                <PhilosopherCard
+                  philosopher={PHILOSOPHERS[KRISHNA_ID]}
+                  isActive={false}
+                  onSelect={() => selectPhilosopher(KRISHNA_ID)}
+                />
+              </div>
+              <div className={styles.welcomeSectionLabel}>Philosophers</div>
               <div className={styles.welcomeGrid}>
-                {[...INDIAN_IDS, ...WESTERN_IDS].map((id) => (
+                {ALL_PHILOSOPHER_IDS.map((id) => (
                   <PhilosopherCard
                     key={id}
                     philosopher={PHILOSOPHERS[id]}

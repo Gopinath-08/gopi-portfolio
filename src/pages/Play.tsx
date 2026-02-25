@@ -25,8 +25,8 @@ const Play = () => {
     },
     {
       icon: Sparkles,
-      title: 'Dead Philosophers',
-      description: 'मृत दार्शनिकों से मिलें · Chat with Chanakya, Shankaracharya, Aristotle & more. Ancient wisdom for modern problems.',
+      title: 'Krishna & Philosophers',
+      description: 'Talk to Krishna (from the Bhagavad Gita) and to philosophers — Chanakya, Shankaracharya, Aristotle & more. Ancient wisdom for modern problems.',
       color: 'text-primary',
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/30',
