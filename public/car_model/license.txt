@@ -1,0 +1,8 @@
+Model Information:
+* title:	Old car
+* source:	https://sketchfab.com/3d-models/old-car-564fc37061494294889ef420bdade877
+* author:	solid3DDD (https://sketchfab.com/solid3ddd)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

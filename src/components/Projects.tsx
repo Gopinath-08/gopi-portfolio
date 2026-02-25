@@ -1,105 +1,142 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { ExternalLink, Github } from 'lucide-react';
-
-const projects = [
-  {
-    title: 'Prompty App',
-    description: 'Prompty helps you discover, save, and use powerful AI prompts with ease. Explore curated prompts that boost creativity, productivity, and better results across ChatGPT and other AI tools—all in a clean, intuitive experience.',
-    tags: ['React Native', 'TypeScript', 'Express', 'MongoDB'],
-    image: 'https://play-lh.googleusercontent.com/Z0KWpAZm31-5hDdt3Q1Ofcuf1KIlmZ0Df8ZXbpvl9tUj-d5u2AQcQzNwf8zM81N-lQFTWVrge-YrLvDYVl48=w832-h470-rw',
-    liveUrl: 'https://play.google.com/store/apps/details?id=com.prompty.app',
-    githubUrl: 'https://github.com/Gopinath-08',
-  },
-  {
-    title: 'Prompty App',
-    description: 'Prompty helps you discover, save, and use powerful AI prompts with ease. Explore curated prompts that boost creativity, productivity, and better results across ChatGPT and other AI tools—all in a clean, intuitive experience.',
-    tags: ['React Native', 'TypeScript', 'Express', 'MongoDB'],
-    image: 'https://play-lh.googleusercontent.com/Z0KWpAZm31-5hDdt3Q1Ofcuf1KIlmZ0Df8ZXbpvl9tUj-d5u2AQcQzNwf8zM81N-lQFTWVrge-YrLvDYVl48=w832-h470-rw',
-    liveUrl: 'https://play.google.com/store/apps/details?id=com.prompty.app',
-    githubUrl: 'https://github.com/Gopinath-08',
-  },
-  
- 
-];
+import { ExternalLink, Github, Loader2, AlertCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api';
+import MobileFrame from './MobileFrame';
+import WebsiteFrame from './WebsiteFrame';
 
 const Projects = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      const response = await apiClient.getProjects();
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const projects = data || [];
+
   return (
-    <section id="projects" className="py-24 bg-card" ref={ref}>
+    <section id="projects" className="py-32 bg-card relative" ref={ref}>
       <div className="container mx-auto px-6">
+        {/* Asymmetric header */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center mb-16"
+          initial={{ opacity: 0, x: -30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mb-20"
         >
-          <span className="text-primary font-medium text-sm uppercase tracking-wider">Portfolio</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4 mb-6">
-            Featured <span className="text-gradient-accent">Projects</span>
+          <h2 className="text-6xl md:text-7xl font-serif text-foreground mb-8 leading-tight tracking-tight">
+            Projects
           </h2>
-          <p className="text-lg text-muted-foreground">
-            A selection of projects that showcase my expertise and passion for building exceptional products.
+          <p className="text-lg text-foreground/90 max-w-2xl font-sans leading-relaxed">
+            Selected work demonstrating technical depth and problem-solving approach.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
-            <motion.article
-              key={project.title}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-              className="group bg-background rounded-3xl overflow-hidden shadow-card hover-lift"
-            >
-              <div className="relative overflow-hidden aspect-[4/3]">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                  <div className="flex gap-3">
-                    <motion.a
-                      href={project.liveUrl}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-primary text-primary-foreground rounded-full"
-                    >
-                      <ExternalLink size={18} />
-                    </motion.a>
-                    <motion.a
-                      href={project.githubUrl}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-background text-foreground rounded-full"
-                    >
-                      <Github size={18} />
-                    </motion.a>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <AlertCircle className="w-12 h-12 text-destructive mb-4" />
+            <p className="text-muted-foreground">
+              {error instanceof Error ? error.message : 'Failed to load projects'}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Please check your connection and try again.
+            </p>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">No projects available at the moment.</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-12">
+            {projects.map((project, index) => (
+              <motion.article
+                key={project.id || project.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.7, delay: 0.1 * index, ease: [0.16, 1, 0.3, 1] }}
+                className="group"
+              >
+                <div className="relative mb-6">
+                  {/* Use appropriate frame based on project type */}
+                  <div className="relative">
+                    {project.type === 'mobile' ? (
+                      <MobileFrame
+                        image={project.image}
+                        url={project.liveUrl}
+                        className="flex justify-center"
+                      />
+                    ) : (
+                      <WebsiteFrame
+                        image={project.image}
+                        url={project.liveUrl}
+                      />
+                    )}
+                  </div>
+                  
+                  {/* Action buttons - always visible but subtle */}
+                  <div className="absolute bottom-4 right-4 flex gap-2 z-10">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg opacity-0 group-hover:opacity-100"
+                        aria-label="View live site"
+                      >
+                        <ExternalLink size={16} />
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-background border border-border text-foreground hover:border-primary transition-colors shadow-lg opacity-0 group-hover:opacity-100"
+                        aria-label="View source code"
+                      >
+                        <Github size={16} />
+                      </a>
+                    )}
+                  </div>
+                  
+                  {/* Project type badge */}
+                  {project.type && (
+                    <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm border border-border px-2.5 py-1 font-mono text-xs font-medium uppercase z-10">
+                      {project.type}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-serif text-foreground mb-3 group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-foreground/80 mb-4 text-sm leading-relaxed font-sans">{project.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-1 bg-card border border-primary/30 text-xs font-mono text-foreground/70 hover:border-accent hover:text-accent transition-colors"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-display font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+              </motion.article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
