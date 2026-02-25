@@ -1,18 +1,21 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 
 const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/#home', isHash: true },
+  { label: 'About', href: '/#about', isHash: true },
+  { label: 'Skills', href: '/#skills', isHash: true },
+  { label: 'Projects', href: '/#projects', isHash: true },
+  { label: 'Contact', href: '/#contact', isHash: true },
+  { label: 'Play', href: '/play', isHash: false },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <motion.nav
@@ -23,14 +26,17 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <motion.a
-            href="#home"
-            className="text-lg font-serif text-primary hover:text-accent transition-colors"
+          <motion.div
             whileHover={{ x: 2 }}
             whileTap={{ scale: 0.98 }}
           >
-            G.M
-          </motion.a>
+            <Link
+              to="/"
+              className="text-lg font-serif text-primary hover:text-accent transition-colors"
+            >
+              G.M
+            </Link>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <ul className="hidden md:flex items-center gap-8">
@@ -41,13 +47,25 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 + 0.3 }}
               >
-                <a
-                  href={item.href}
-                  className="text-foreground/70 hover:text-primary transition-colors font-sans text-sm uppercase tracking-wider relative group"
-                >
-                  {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
-                </a>
+                {item.isHash ? (
+                  <a
+                    href={item.href}
+                    className="text-foreground/70 hover:text-primary transition-colors font-sans text-sm uppercase tracking-wider relative group"
+                  >
+                    {item.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    className={`text-foreground/70 hover:text-primary transition-colors font-sans text-sm uppercase tracking-wider relative group ${
+                      location.pathname === item.href ? 'text-primary' : ''
+                    }`}
+                  >
+                    {item.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+                  </Link>
+                )}
               </motion.li>
             ))}
           </ul>
@@ -88,13 +106,23 @@ const Navbar = () => {
             <ul className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <li key={item.label}>
-                  <a
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium py-2"
-                  >
-                    {item.label}
-                  </a>
+                  {item.isHash ? (
+                    <a
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium py-2"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium py-2"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
               <li>

@@ -1,10 +1,10 @@
 // API Base URL configuration
-// Priority: 1. VITE_API_URL env variable, 2. Production URL, 3. Proxy for development
-const API_BASE_URL = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : import.meta.env.PROD
-  ? 'https://gopi-backend-mpjh.onrender.com/api'
-  : 'https://gopi-backend-mpjh.onrender.com/api'; // Use production API URL
+// Priority: 1. VITE_API_URL env variable, 2. In dev use local backend, 3. Production URL
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
+  : import.meta.env.DEV
+  ? 'http://localhost:3000/api'
+  : 'https://gopi-backend-mpjh.onrender.com/api';
 
 export interface ApiError {
   status: string;
@@ -92,6 +92,18 @@ class ApiClient {
     return this.request<{ status: string; data: GitHubProfile }>('/github/profile', {
       method: 'GET',
     });
+  }
+
+  async philosopherChat(
+    philosopherId: string,
+    messages: { role: 'user' | 'assistant'; content: string }[],
+    system: string
+  ): Promise<{ text: string }> {
+    const res = await this.request<{ text: string } | { response: string }>('/philosophers/chat', {
+      method: 'POST',
+      body: JSON.stringify({ philosopherId, messages, system }),
+    });
+    return { text: 'text' in res ? res.text : res.response };
   }
 }
 
