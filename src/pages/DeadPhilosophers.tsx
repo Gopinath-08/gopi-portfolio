@@ -199,15 +199,21 @@ const DeadPhilosophers = () => {
 
           {!currentPhil && (
             <div className={styles.welcomeScreen}>
-              <div className={styles.welcomeOmWrap}>
-                <div className={styles.welcomeOm}>ॐ</div>
-              </div>
-              <div className={styles.dividerOrnament}>⋯ ❧ ⋯</div>
-              <h2 className={styles.welcomeH2}>Summon a Philosopher</h2>
+              <h2 className={styles.welcomeH2}>Chat with a Philosopher</h2>
               <p className={styles.welcomeP}>
-                Tell Chanakya about your situationship. Ask Shankaracharya about your NEET score. Have Aristotle review your LinkedIn. Ancient wisdom meets completely mundane modern problems.
+                Get advice from ancient thinkers on modern problems. Pick one below to start the conversation.
               </p>
-              <div className={styles.welcomeInstruction}>← Select a philosopher to begin</div>
+              <div className={styles.welcomeGrid}>
+                {[...INDIAN_IDS, ...WESTERN_IDS].map((id) => (
+                  <PhilosopherCard
+                    key={id}
+                    philosopher={PHILOSOPHERS[id]}
+                    isActive={false}
+                    onSelect={() => selectPhilosopher(id)}
+                  />
+                ))}
+              </div>
+              <div className={styles.welcomeInstruction}>You can also choose from the list on the left (desktop)</div>
             </div>
           )}
 
