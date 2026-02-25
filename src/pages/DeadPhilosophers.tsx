@@ -147,19 +147,6 @@ const DeadPhilosophers = () => {
       </Link>
 
       <div className={styles.grid}>
-        <header className={styles.topbar}>
-          <div>
-            <h1 className={styles.topbarTitle}>DEAD PHILOSOPHERS</h1>
-            <div className={styles.topbarSub}>Ancient Wisdom · Modern Problems</div>
-          </div>
-          <span className={styles.topOrnament}>꩜</span>
-          <div className={styles.topRight}>
-            मृत दार्शनिकों से मिलें
-            <br />
-            <span style={{ fontSize: '9px', letterSpacing: '1px' }}>powered by claude</span>
-          </div>
-        </header>
-
         <aside className={styles.sidebar}>
           <div className={styles.sidebarLabel}>Choose Your Philosopher</div>
           {INDIAN_IDS.map((id) => (
@@ -194,6 +181,14 @@ const DeadPhilosophers = () => {
                   Summoned from beyond
                 </div>
               </div>
+              <button
+                type="button"
+                className={styles.changePhilBtn}
+                onClick={() => setCurrentPhil(null)}
+                aria-label="Change philosopher"
+              >
+                Change
+              </button>
             </div>
           )}
 
