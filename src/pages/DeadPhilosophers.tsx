@@ -25,6 +25,8 @@ function formatPhilResponse(text: string): string {
     .replace(/\n/g, '<br>');
 }
 
+const STORAGE_KEY = 'dead-philosophers-state';
+
 const DeadPhilosophers = () => {
   const [currentPhil, setCurrentPhil] = useState<PhilosopherId | null>(null);
   const [chatHistory, setChatHistory] = useState<Record<PhilosopherId, Message[]>>({} as Record<PhilosopherId, Message[]>);
@@ -33,6 +35,34 @@ const DeadPhilosophers = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  // Restore chat state on mount
+  useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
+      if (raw) {
+        const parsed = JSON.parse(raw) as { currentPhil: PhilosopherId | null; chatHistory: Record<PhilosopherId, Message[]> };
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.currentPhil) setCurrentPhil(parsed.currentPhil);
+          if (parsed.chatHistory) setChatHistory(parsed.chatHistory);
+        }
+      }
+    } catch {
+      // ignore corrupted storage
+    }
+  }, []);
+
+  // Persist chat state whenever it changes
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const payload = JSON.stringify({ currentPhil, chatHistory });
+        window.localStorage.setItem(STORAGE_KEY, payload);
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [currentPhil, chatHistory]);
 
   useEffect(() => {
     scrollToBottom();
@@ -68,11 +98,13 @@ const DeadPhilosophers = () => {
     try {
       const systemPrompt =
         PHILOSOPHERS[currentPhil].system +
-        `\n\nIMPORTANT — Response quality & voice:
+        `\n\nIMPORTANT — Conversation, context & language:
 - The person is likely Indian, asking about modern problems (startups, NEET, IIT, career, relationships, pressure, etc.). Apply your wisdom to their specific situation, not in abstract.
+- Always treat this as an ongoing 1:1 conversation. Carefully read ALL previous messages in this chat and respond in a way that directly addresses the latest user message **and** any relevant context before it. Never ignore what they said just before.
 - Speak like you are actually talking to them in real time — use a warm, direct, second‑person voice (“you”, “I”), occasional questions, and natural rhythm. This should feel like a **conversation**, not an essay or blog post.
 - Give a THOROUGH, SATISFYING answer. Aim for 4–6 paragraphs (or more if the question needs it). The user should feel heard, understood, and genuinely helped.
 - Always include: (1) brief empathy or acknowledgment of their situation, (2) your philosophical take, (3) 2–4 CONCRETE, ACTIONABLE steps they can take next. End with a clear takeaway or one-line mantra they can remember that sounds like something **you** would say.
+- Language: reply primarily in the same language or mix (English / Hindi / Hinglish) as the user's latest message, unless they explicitly ask for a different language.
 - Be wise and occasionally witty, but never dismissive. Leave them feeling that the answer was worth the ask and that they just had a real conversation with you.`;
       const { text: responseText } = await apiClient.philosopherChat(currentPhil, apiMessages, systemPrompt);
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

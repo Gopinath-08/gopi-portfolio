@@ -18,7 +18,9 @@
   font-family: 'EB Garamond', Georgia, serif;
   color: var(--parchment);
   position: relative;
-  overflow: hidden;
+  /* Allow normal page scrolling; only hide horizontal overflow */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .wrapper::before {
@@ -39,7 +41,8 @@
   display: grid;
   grid-template-columns: 300px 1fr;
   grid-template-rows: 64px 1fr;
-  height: 100vh;
+  /* Let content grow beyond viewport for easier scrolling */
+  min-height: 100vh;
   max-width: 1200px;
   margin: 0 auto;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.4);
@@ -266,7 +269,8 @@
 
 .messages {
   flex: 1;
-  overflow-y: auto;
+  /* Let the whole page scroll instead of a nested scroll area */
+  overflow-y: visible;
   padding: 28px;
   display: flex;
   flex-direction: column;
@@ -618,10 +622,29 @@
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
-    grid-template-rows: 60px 50px 1fr;
+    grid-template-rows: auto 1fr;
+    max-width: 100%;
   }
 
   .sidebar {
     display: none;
+  }
+
+  .chatArea {
+    min-height: calc(100vh - 64px);
+  }
+
+  .messages {
+    padding: 20px 16px 16px;
+  }
+
+  .inputBar {
+    padding: 14px 16px 18px;
+    gap: 10px;
+  }
+
+  .backLink {
+    left: 12px;
+    top: 10px;
   }
 }
