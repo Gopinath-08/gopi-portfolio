@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Code, Gamepad2, Sparkles, Zap, Palette, Music, ArrowLeft } from 'lucide-react';
+import { Code, Gamepad2, Sparkles, Zap, Palette, Music, ArrowLeft, Orbit, Wind } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -14,6 +14,26 @@ const Play = () => {
 
   const playItems = [
     {
+      icon: Orbit,
+      title: 'Orbit Merge',
+      description: 'Drop celestial orbs, match their energy, and build the largest body your orbit can hold.',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
+      borderColor: 'border-accent/30',
+      link: '/play/orbit-merge',
+      featured: true,
+    },
+    {
+      icon: Wind,
+      title: 'Sky Flow',
+      description: 'A satisfying, relaxing, and addictive 3D endless flight game. Glide through rings, drift in the wind, and boost through clouds.',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
+      borderColor: 'border-accent/30',
+      link: '/play/sky-flow',
+      featured: true,
+    },
+    {
       icon: Zap,
       title: 'Nothing to Hide',
       description: 'An unsettling surveillance experience. Browse normally. There is no reason to feel watched.',
@@ -25,13 +45,13 @@ const Play = () => {
     },
     {
       icon: Sparkles,
-      title: 'Dead Philosophers',
-      description: 'मृत दार्शनिकों से मिलें · Chat with Chanakya, Shankaracharya, Aristotle & more. Ancient wisdom for modern problems.',
+      title: 'Krishna & Philosophers',
+      description: 'Talk to Krishna (from the Bhagavad Gita) and to philosophers — Chanakya, Shankaracharya, Aristotle & more. Ancient wisdom for modern problems.',
       color: 'text-primary',
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/30',
       link: '/play/dead-philosophers',
-      featured: true,
+      featured: false,
     },
     {
       icon: Code,

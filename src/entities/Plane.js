@@ -10,7 +10,7 @@ export class Plane {
     this.loaded = false;
     
     // Position and rotation - start on runway
-    this.position = new THREE.Vector3(0, 2, -80); // Start at beginning of runway, slightly above ground
+    this.position = new THREE.Vector3(0, 28, -20);
     this.rotation = new THREE.Euler(0, 0, 0); // Face forward along runway
     
     // Physics state

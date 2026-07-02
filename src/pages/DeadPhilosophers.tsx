@@ -7,8 +7,10 @@ import styles from './DeadPhilosophers.module.css';
 
 type Message = { role: 'user' | 'assistant'; content: string; timestamp?: string };
 
-const INDIAN_IDS: PhilosopherId[] = ['chanakya', 'shankaracharya', 'vivekananda', 'nagarjuna'];
+const KRISHNA_ID: PhilosopherId = 'krishna';
+const INDIAN_PHILOSOPHER_IDS: PhilosopherId[] = ['chanakya', 'shankaracharya', 'vivekananda', 'nagarjuna'];
 const WESTERN_IDS: PhilosopherId[] = ['aristotle', 'socrates', 'nietzsche', 'camus'];
+const ALL_PHILOSOPHER_IDS: PhilosopherId[] = [...INDIAN_PHILOSOPHER_IDS, ...WESTERN_IDS];
 
 function escapeHtml(text: string): string {
   return text
@@ -25,6 +27,8 @@ function formatPhilResponse(text: string): string {
     .replace(/\n/g, '<br>');
 }
 
+const STORAGE_KEY = 'dead-philosophers-state';
+
 const DeadPhilosophers = () => {
   const [currentPhil, setCurrentPhil] = useState<PhilosopherId | null>(null);
   const [chatHistory, setChatHistory] = useState<Record<PhilosopherId, Message[]>>({} as Record<PhilosopherId, Message[]>);
@@ -33,6 +37,34 @@ const DeadPhilosophers = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  // Restore chat state on mount
+  useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
+      if (raw) {
+        const parsed = JSON.parse(raw) as { currentPhil: PhilosopherId | null; chatHistory: Record<PhilosopherId, Message[]> };
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.currentPhil) setCurrentPhil(parsed.currentPhil);
+          if (parsed.chatHistory) setChatHistory(parsed.chatHistory);
+        }
+      }
+    } catch {
+      // ignore corrupted storage
+    }
+  }, []);
+
+  // Persist chat state whenever it changes
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const payload = JSON.stringify({ currentPhil, chatHistory });
+        window.localStorage.setItem(STORAGE_KEY, payload);
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [currentPhil, chatHistory]);
 
   useEffect(() => {
     scrollToBottom();
@@ -68,11 +100,13 @@ const DeadPhilosophers = () => {
     try {
       const systemPrompt =
         PHILOSOPHERS[currentPhil].system +
-        `\n\nIMPORTANT — Response quality & voice:
+        `\n\nIMPORTANT — Conversation, context & language:
 - The person is likely Indian, asking about modern problems (startups, NEET, IIT, career, relationships, pressure, etc.). Apply your wisdom to their specific situation, not in abstract.
+- Always treat this as an ongoing 1:1 conversation. Carefully read ALL previous messages in this chat and respond in a way that directly addresses the latest user message **and** any relevant context before it. Never ignore what they said just before.
 - Speak like you are actually talking to them in real time — use a warm, direct, second‑person voice (“you”, “I”), occasional questions, and natural rhythm. This should feel like a **conversation**, not an essay or blog post.
 - Give a THOROUGH, SATISFYING answer. Aim for 4–6 paragraphs (or more if the question needs it). The user should feel heard, understood, and genuinely helped.
 - Always include: (1) brief empathy or acknowledgment of their situation, (2) your philosophical take, (3) 2–4 CONCRETE, ACTIONABLE steps they can take next. End with a clear takeaway or one-line mantra they can remember that sounds like something **you** would say.
+- Language: reply primarily in the same language or mix (English / Hindi / Hinglish) as the user's latest message, unless they explicitly ask for a different language.
 - Be wise and occasionally witty, but never dismissive. Leave them feeling that the answer was worth the ask and that they just had a real conversation with you.`;
       const { text: responseText } = await apiClient.philosopherChat(currentPhil, apiMessages, systemPrompt);
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -82,7 +116,7 @@ const DeadPhilosophers = () => {
         [currentPhil]: [...(prev[currentPhil] ?? []), assistantMsg],
       }));
     } catch {
-      const errMsg = `*The summoning was interrupted by a disturbance in the ether.*\n\nI apologize — it seems the connection to the beyond was disrupted. Please try again.`;
+      const errMsg = `*The connection was interrupted.*\n\nI apologize — something went wrong on the way. Please try again.`;
       const assistantMsg: Message = { role: 'assistant', content: errMsg, timestamp: '—' };
       setChatHistory((prev) => ({
         ...prev,
@@ -115,22 +149,16 @@ const DeadPhilosophers = () => {
       </Link>
 
       <div className={styles.grid}>
-        <header className={styles.topbar}>
-          <div>
-            <h1 className={styles.topbarTitle}>DEAD PHILOSOPHERS</h1>
-            <div className={styles.topbarSub}>Ancient Wisdom · Modern Problems</div>
-          </div>
-          <span className={styles.topOrnament}>꩜</span>
-          <div className={styles.topRight}>
-            मृत दार्शनिकों से मिलें
-            <br />
-            <span style={{ fontSize: '9px', letterSpacing: '1px' }}>powered by claude</span>
-          </div>
-        </header>
-
         <aside className={styles.sidebar}>
-          <div className={styles.sidebarLabel}>Choose Your Philosopher</div>
-          {INDIAN_IDS.map((id) => (
+          <div className={styles.sidebarLabel}>Krishna</div>
+          <PhilosopherCard
+            philosopher={PHILOSOPHERS[KRISHNA_ID]}
+            isActive={currentPhil === KRISHNA_ID}
+            onSelect={() => selectPhilosopher(KRISHNA_ID)}
+          />
+          <div className={styles.sidebarDivider} />
+          <div className={styles.sidebarLabel}>Indian Philosophers</div>
+          {INDIAN_PHILOSOPHER_IDS.map((id) => (
             <PhilosopherCard
               key={id}
               philosopher={PHILOSOPHERS[id]}
@@ -139,7 +167,7 @@ const DeadPhilosophers = () => {
             />
           ))}
           <div className={styles.sidebarDivider} />
-          <div className={styles.sidebarLabel} style={{ paddingTop: 10 }}>Greek & Western</div>
+          <div className={styles.sidebarLabel}>Greek & Western</div>
           {WESTERN_IDS.map((id) => (
             <PhilosopherCard
               key={id}
@@ -159,23 +187,45 @@ const DeadPhilosophers = () => {
                 <div className={styles.philHeaderTagline}>{phil.tagline}</div>
                 <div className={styles.philStatus}>
                   <span className={styles.statusDot} />
-                  Summoned from beyond
+                  Here to guide
                 </div>
               </div>
+              <button
+                type="button"
+                className={styles.changePhilBtn}
+                onClick={() => setCurrentPhil(null)}
+                aria-label="Change philosopher"
+              >
+                Change
+              </button>
             </div>
           )}
 
           {!currentPhil && (
             <div className={styles.welcomeScreen}>
-              <div className={styles.welcomeOmWrap}>
-                <div className={styles.welcomeOm}>ॐ</div>
-              </div>
-              <div className={styles.dividerOrnament}>⋯ ❧ ⋯</div>
-              <h2 className={styles.welcomeH2}>Summon a Philosopher</h2>
+              <h2 className={styles.welcomeH2}>Chat with Krishna or a Philosopher</h2>
               <p className={styles.welcomeP}>
-                Tell Chanakya about your situationship. Ask Shankaracharya about your NEET score. Have Aristotle review your LinkedIn. Ancient wisdom meets completely mundane modern problems.
+                Talk to Krishna (from the Bhagavad Gita) or to philosophers. Pick one below to start.
               </p>
-              <div className={styles.welcomeInstruction}>← Select a philosopher to begin</div>
+              <div className={styles.welcomeKrishnaWrap}>
+                <PhilosopherCard
+                  philosopher={PHILOSOPHERS[KRISHNA_ID]}
+                  isActive={false}
+                  onSelect={() => selectPhilosopher(KRISHNA_ID)}
+                />
+              </div>
+              <div className={styles.welcomeSectionLabel}>Philosophers</div>
+              <div className={styles.welcomeGrid}>
+                {ALL_PHILOSOPHER_IDS.map((id) => (
+                  <PhilosopherCard
+                    key={id}
+                    philosopher={PHILOSOPHERS[id]}
+                    isActive={false}
+                    onSelect={() => selectPhilosopher(id)}
+                  />
+                ))}
+              </div>
+              <div className={styles.welcomeInstruction}>You can also choose from the list on the left (desktop)</div>
             </div>
           )}
 

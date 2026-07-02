@@ -64,17 +64,21 @@ const PlaneGame3DPage = () => {
 
         {/* Menu */}
         {showMenu && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="bg-black/80 border border-cyan-500/50 rounded-lg p-8 max-w-md w-full mx-4">
-              <h2 className="text-3xl font-serif text-white mb-4 text-center">3D Plane Game</h2>
-              <p className="text-white/70 text-center mb-6 font-sans">
-                Experience arcade-style flight physics! Use WASD to control pitch and roll, Q/E for yaw, and Shift for boost.
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className="bg-black/80 border border-cyan-500/30 rounded-xl p-8 max-w-md w-full mx-4 shadow-[0_0_50px_rgba(6,182,212,0.15)] backdrop-blur-md">
+              <h2 className="text-4xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-sky-400 mb-4 text-center tracking-wide font-bold">Sky Flow</h2>
+              <p className="text-white/80 text-center mb-6 font-sans text-sm leading-relaxed">
+                A relaxing 3D flight experience. Glide through golden rings, drift through the air, and boost across the oceans.
+                <br/><br/>
+                <span className="text-cyan-400">Controls:</span><br/>
+                • <b>Steer</b>: WASD / Arrow Keys or <b>Click & Drag</b><br/>
+                • <b>Boost</b>: Shift / Space or Hold Click
               </p>
               <button
                 onClick={handleStart}
-                className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-sans transition-colors"
+                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white rounded-lg font-sans transition-all duration-300 font-semibold tracking-wider shadow-lg shadow-cyan-500/20 active:scale-95"
               >
-                Start Game
+                Launch Flight
               </button>
             </div>
           </div>
