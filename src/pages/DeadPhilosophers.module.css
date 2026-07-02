@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap');
 
 /* ─── Light, clean theme ─── */
@@ -734,3 +735,741 @@
     min-height: 48px;
   }
 }
+=======
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap');
+
+/* ─── Light, clean theme ─── */
+.wrapper {
+  --bg: #f5f5f4;
+  --surface: #ffffff;
+  --text: #1c1917;
+  --textSecondary: #57534e;
+  --accent: #0d9488;
+  --accentHover: #0f766e;
+  --border: #e7e5e4;
+  --userBubble: #0d9488;
+  --botBubble: #e7e5e4;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadowMd: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.wrapper::before {
+  display: none;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: var(--surface);
+  box-shadow: var(--shadowMd);
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.sidebarLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  padding: 0 16px 8px;
+}
+
+.philosopherCard {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  border-left: 3px solid transparent;
+  text-align: left;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+}
+
+.philosopherCard:hover {
+  background: rgba(13, 148, 136, 0.06);
+  border-left-color: var(--accent);
+}
+
+.philosopherCardActive {
+  background: rgba(13, 148, 136, 0.1);
+  border-left-color: var(--accent);
+}
+
+.philCardEmoji {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.philCardText {
+  flex: 1;
+  min-width: 0;
+}
+
+.philName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.philDevanagari {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 0.75rem;
+  color: var(--textSecondary);
+  margin-bottom: 2px;
+}
+
+.philDates {
+  font-size: 0.6875rem;
+  color: var(--textSecondary);
+}
+
+.philTag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--border);
+  color: var(--textSecondary);
+  margin-top: 4px;
+}
+
+.sidebarDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 16px;
+}
+
+/* ─── Chat area ─── */
+.chatArea {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  min-height: 400px;
+}
+
+.philHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.changePhilBtn {
+  display: none;
+  flex-shrink: 0;
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(13, 148, 136, 0.1);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+.changePhilBtn:hover {
+  background: rgba(13, 148, 136, 0.15);
+}
+
+.philAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  background: var(--botBubble);
+}
+
+.philHeaderInfo {
+  flex: 1;
+}
+
+.philHeaderName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.philHeaderTagline {
+  font-size: 0.8125rem;
+  color: var(--textSecondary);
+  line-height: 1.4;
+}
+
+.philStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Messages ─── */
+.messages {
+  flex: 1;
+  overflow-y: visible;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msgUser {
+  align-self: flex-end;
+  max-width: 85%;
+  animation: msgIn 0.25s ease;
+}
+
+.msgUserBubble {
+  background: var(--userBubble);
+  color: #fff;
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  box-shadow: var(--shadow);
+}
+
+.msgUserTs {
+  text-align: right;
+  font-size: 0.6875rem;
+  color: var(--textSecondary);
+  margin-top: 4px;
+}
+
+.msgPhil {
+  align-self: flex-start;
+  max-width: 85%;
+  display: flex;
+  gap: 10px;
+  animation: msgIn 0.25s ease;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msgPhilAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--botBubble);
+  align-self: flex-end;
+}
+
+.philNameLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--textSecondary);
+  margin-bottom: 4px;
+}
+
+.msgPhilBubble {
+  background: var(--botBubble);
+  border-radius: 4px 16px 16px 16px;
+  padding: 14px 16px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.msgPhilBubble p {
+  padding-left: 0;
+  margin: 0;
+}
+
+.msgPhilBubble p:first-of-type::first-letter {
+  font-size: inherit;
+  color: inherit;
+  float: none;
+  margin: 0;
+}
+
+.msgPhilTs {
+  font-size: 0.6875rem;
+  color: var(--textSecondary);
+  margin-top: 4px;
+}
+
+.typingBubble {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px;
+  align-items: center;
+}
+
+.typingDot {
+  width: 6px;
+  height: 6px;
+  background: var(--textSecondary);
+  border-radius: 50%;
+  animation: typingBounce 1s infinite;
+  opacity: 0.6;
+}
+
+.typingDot:nth-child(2) { animation-delay: 0.15s; }
+.typingDot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+
+/* ─── Suggestions ─── */
+.suggestions {
+  padding: 0 20px 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suggestionChip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--textSecondary);
+  font-size: 0.8125rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.suggestionChip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(13, 148, 136, 0.06);
+}
+
+/* ─── Input ─── */
+.inputBar {
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.inputWrap {
+  flex: 1;
+  position: relative;
+}
+
+.inputBar textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  padding: 12px 16px 32px;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  max-height: 120px;
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputBar textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+}
+
+.inputBar textarea::placeholder {
+  color: var(--textSecondary);
+}
+
+.charCount {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-size: 0.6875rem;
+  color: var(--textSecondary);
+  pointer-events: none;
+}
+
+.sendBtn {
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  border-radius: 12px;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: var(--accentHover);
+}
+
+.sendBtn:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+  color: var(--textSecondary);
+}
+
+/* ─── Welcome ─── */
+.welcomeScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  gap: 16px;
+}
+
+.welcomeOmWrap {
+  position: relative;
+}
+
+.welcomeOm {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 3rem;
+  color: var(--accent);
+  opacity: 0.9;
+}
+
+.welcomeOmWrap::before {
+  display: none;
+}
+
+.welcomeH2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.welcomeP {
+  font-size: 0.9375rem;
+  color: var(--textSecondary);
+  max-width: 380px;
+  line-height: 1.6;
+}
+
+.welcomeKrishnaWrap {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.welcomeKrishnaWrap .philosopherCard {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-left-width: 1px;
+  padding: 14px 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.welcomeKrishnaWrap .philosopherCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.welcomeSectionLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--textSecondary);
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.welcomeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 520px;
+  margin-top: 8px;
+}
+
+.welcomeGrid .philosopherCard {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-left-width: 1px;
+  padding: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.welcomeGrid .philosopherCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.welcomeInstruction {
+  font-size: 0.75rem;
+  color: var(--textSecondary);
+  margin-top: 16px;
+}
+
+.dividerOrnament {
+  display: none;
+}
+
+/* ─── Back link ─── */
+.backLink {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--textSecondary);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.backLink:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(13, 148, 136, 0.06);
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    max-width: 100%;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .changePhilBtn {
+    display: block;
+  }
+
+  .philHeader {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .philHeaderInfo {
+    min-width: 0;
+  }
+
+  .philHeaderName {
+    font-size: 0.9375rem;
+  }
+
+  .philHeaderTagline {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .chatArea {
+    min-height: 100vh;
+  }
+
+  .messages {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .msgPhilBubble,
+  .msgUserBubble {
+    font-size: 1rem;
+    padding: 14px 16px;
+    line-height: 1.6;
+  }
+
+  .suggestions {
+    padding: 0 16px 12px;
+    gap: 10px;
+  }
+
+  .suggestionChip {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .inputBar {
+    padding: 12px 16px 16px;
+    gap: 10px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  .backLink {
+    left: 12px;
+    top: 12px;
+  }
+
+  .msgUser,
+  .msgPhil {
+    max-width: 92%;
+  }
+
+  .welcomeInstruction {
+    display: none;
+  }
+
+  /* Welcome / philosopher picker on mobile */
+  .welcomeScreen {
+    padding: 24px 20px 32px;
+    gap: 20px;
+    padding-top: max(24px, env(safe-area-inset-top));
+  }
+
+  .welcomeH2 {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+
+  .welcomeP {
+    font-size: 1rem;
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  .welcomeGrid {
+    max-width: 100%;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 12px;
+  }
+
+  .welcomeGrid .philosopherCard {
+    padding: 14px 12px;
+    min-height: 100px;
+    gap: 10px;
+  }
+
+  .welcomeGrid .philCardEmoji {
+    font-size: 1.75rem;
+  }
+
+  .welcomeGrid .philName {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .welcomeGrid .philDevanagari {
+    font-size: 0.8125rem;
+    margin-bottom: 4px;
+  }
+
+  .welcomeGrid .philDates {
+    font-size: 0.75rem;
+  }
+
+  .welcomeGrid .philTag {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    margin-top: 6px;
+  }
+
+  .welcomeKrishnaWrap {
+    max-width: 100%;
+  }
+
+  .welcomeSectionLabel {
+    margin-top: 16px;
+  }
+
+  .backLink {
+    padding: 10px 14px;
+    min-height: 44px;
+    top: max(14px, env(safe-area-inset-top));
+  }
+
+  .inputBar textarea {
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 14px 16px 36px;
+  }
+
+  .sendBtn {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1

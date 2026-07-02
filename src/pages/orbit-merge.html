@@ -91,6 +91,7 @@
     font-variant-numeric: tabular-nums;
     color:var(--ink);
   }
+<<<<<<< HEAD
   #mission-bar{
     width:100%;
     min-height:40px;
@@ -126,11 +127,17 @@
     font-size:10px;
     white-space:nowrap;
   }
+=======
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
   #next-block{ display:flex; flex-direction:column; align-items:center; gap:2px; }
   #next-canvas{ width:38px; height:38px; }
   canvas#game{
     display:block;
+<<<<<<< HEAD
     width:min(380px, calc(100vw - 28px), calc((100vh - 235px) * .6785));
+=======
+    width:min(380px, calc(100vw - 28px), calc((100vh - 190px) * .6785));
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
     height:auto;
     border-radius:12px;
     background: var(--well);
@@ -150,6 +157,7 @@
     padding:20px;
   }
   #overlay.show{ opacity:1; pointer-events:all; }
+<<<<<<< HEAD
   #event-toast{
     position:absolute;
     left:50%; top:90px;
@@ -168,6 +176,8 @@
     white-space:nowrap;
   }
   #event-toast.show{ opacity:1; transform:translate(-50%,0); }
+=======
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
   #overlay h1{
     margin:0; font-size:30px; font-weight:600;
     letter-spacing:0.02em;
@@ -215,6 +225,7 @@
         <span class="hud-value" id="best-val">0</span>
       </div>
     </div>
+<<<<<<< HEAD
     <div id="mission-bar">
       <div id="mission-copy">
         <span id="mission-label">Mission 1</span>
@@ -226,6 +237,11 @@
     <div style="position:relative;">
       <canvas id="game" width="380" height="560"></canvas>
       <div id="event-toast"></div>
+=======
+
+    <div style="position:relative;">
+      <canvas id="game" width="380" height="560"></canvas>
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
       <div id="overlay" class="show">
         <h1 id="overlay-title">ORBIT</h1>
         <p id="overlay-sub">Drop matching orbs to create larger worlds.<br>Keep the orbit below the danger line.</p>
@@ -248,7 +264,11 @@
   // ---------- CONFIG ----------
   const CANVAS_W = 380, CANVAS_H = 560;
   const WALL = 10;
+<<<<<<< HEAD
   const BASE_GRAVITY = 1500;        // px/s^2
+=======
+  const GRAVITY = 1500;             // px/s^2
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
   const RESTITUTION = 0.22;         // bounciness on impact
   const AIR_DRAG = 0.0012;
   const BALL_FRICTION = 0.42;       // Coulomb friction, ball-ball contact
@@ -299,6 +319,7 @@
   let dangerTimer = 0;
   let lastTime = null;
   let idCounter = 1;
+<<<<<<< HEAD
   let combo = 0;
   let comboTimer = 0;
   let runLevel = 1;
@@ -356,6 +377,8 @@
       else updateMissionUI();
     }
   }
+=======
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
 
   function randSpawnTier(){
     const r = Math.random();
@@ -420,12 +443,15 @@
     dt = Math.min(dt, 1/30);
     const sdt = dt / PHYSICS_SUBSTEPS;
     for (let s=0; s<PHYSICS_SUBSTEPS; s++) physicsSubstep(sdt);
+<<<<<<< HEAD
     comboTimer = Math.max(0, comboTimer-dt);
     if (comboTimer === 0) combo = 0;
     if (toastTimer > 0){
       toastTimer -= dt;
       if (toastTimer <= 0) document.getElementById('event-toast').classList.remove('show');
     }
+=======
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
 
     // danger check
     let danger = false;
@@ -457,7 +483,11 @@
   function physicsSubstep(dt){
     // integrate
     for (const b of balls){
+<<<<<<< HEAD
       b.vy += (BASE_GRAVITY + (runLevel-1)*90)*dt;
+=======
+      b.vy += GRAVITY*dt;
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
       b.vx *= (1 - AIR_DRAG);
       b.vy *= (1 - AIR_DRAG);
       b.x += b.vx*dt;
@@ -558,6 +588,7 @@
     nb.squash = 0.3;
     balls.push(nb);
 
+<<<<<<< HEAD
     combo = comboTimer > 0 ? combo+1 : 1;
     comboTimer = 2.1;
     const multiplier = Math.min(4, combo);
@@ -572,6 +603,11 @@
     } else if (multiplier > 1){
       showToast('CHAIN x'+multiplier+'  +'+gained);
     }
+=======
+    const gained = (newTier+1)*8;
+    score += gained;
+    document.getElementById('score-val').textContent = score;
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
     if (score > best){
       best = score;
       document.getElementById('best-val').textContent = best;
@@ -580,7 +616,10 @@
 
     spawnBurst(mx, my, TIERS[newTier].color, 7 + newTier);
     sfxMerge(newTier);
+<<<<<<< HEAD
     recordMerge(newTier);
+=======
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
   }
 
   function spawnBurst(x,y,color,count){
@@ -745,6 +784,7 @@
     dropCooldown = 0;
     gameOver = false;
     dangerTimer = 0;
+<<<<<<< HEAD
     combo = 0;
     comboTimer = 0;
     runLevel = 1;
@@ -757,6 +797,10 @@
 
   mission = makeMission();
   updateMissionUI();
+=======
+  }
+
+>>>>>>> 91789f59d7bf73768e9cdb48b6a41f9a6c3f3de1
   drawNextPreview();
   requestAnimationFrame(loop);
 })();
