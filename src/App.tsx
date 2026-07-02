@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Play from "./pages/Play";
 import NothingToHide from "./pages/NothingToHide";
 import DeadPhilosophers from "./pages/DeadPhilosophers";
+import OrbitMerge from "./pages/OrbitMerge";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/play" element={<Play />} />
             <Route path="/play/nothing-to-hide" element={<NothingToHide />} />
             <Route path="/play/dead-philosophers" element={<DeadPhilosophers />} />
+            <Route path="/play/orbit-merge" element={<OrbitMerge />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

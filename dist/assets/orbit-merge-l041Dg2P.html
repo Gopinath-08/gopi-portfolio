@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>ORBIT — Merge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#070a12;
+    --bg-1:#101724;
+    --line: rgba(255,255,255,0.07);
+    --ink:#e9ecf5;
+    --ink-dim:#7c839c;
+    --accent:#7dd8b0;
+    --well: #0d101a;
+    --panel: rgba(17,21,31,0.8);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    background: var(--bg-0);
+    color:var(--ink);
+    font-family:'Fredoka', sans-serif;
+    overflow:hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #app{
+    position:relative;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    isolation:isolate;
+  }
+  #app::before{
+    content:"";
+    position:absolute; inset:0; z-index:-2;
+    background-color:var(--bg-0);
+  }
+  #app::after{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    background-image:
+      radial-gradient(circle at 15% 18%, rgba(125,216,176,.18) 0 1px, transparent 2px),
+      radial-gradient(circle at 78% 32%, rgba(126,199,224,.22) 0 1px, transparent 2px),
+      radial-gradient(circle at 35% 80%, rgba(168,155,224,.18) 0 1px, transparent 2px);
+    background-size:97px 83px, 137px 119px, 173px 151px;
+    opacity:.8;
+  }
+  #stage-wrap{
+    position:relative;
+    display:flex; flex-direction:column;
+    align-items:center;
+    gap:10px;
+    padding:64px 14px 14px;
+    width:min(408px, 100%);
+  }
+  #stage-wrap::before{
+    content:"ORBIT MERGE";
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:.28em;
+    color:rgba(233,236,245,.42);
+    position:absolute;
+    top:38px;
+  }
+  #hud{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .hud-block{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:7px 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hud-label{
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    font-family:'JetBrains Mono', monospace;
+  }
+  .hud-value{
+    font-size:19px;
+    font-weight:600;
+    font-variant-numeric: tabular-nums;
+    color:var(--ink);
+  }
+  #next-block{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  #next-canvas{ width:38px; height:38px; }
+  canvas#game{
+    display:block;
+    width:min(380px, calc(100vw - 28px), calc((100vh - 190px) * .6785));
+    height:auto;
+    border-radius:12px;
+    background: var(--well);
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 20px 50px -18px rgba(0,0,0,0.7);
+  }
+  #overlay{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:14px;
+    background:rgba(7,10,18,0.92);
+    border-radius:12px;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s ease;
+    text-align:center;
+    padding:20px;
+  }
+  #overlay.show{ opacity:1; pointer-events:all; }
+  #overlay h1{
+    margin:0; font-size:30px; font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--ink);
+  }
+  #overlay p{ margin:0; color:var(--ink-dim); font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; }
+  .btn{
+    font-family:'Fredoka'; font-weight:600; font-size:15px;
+    background:var(--accent); color:#0a140f;
+    border:none; border-radius:6px; padding:11px 24px;
+    cursor:pointer;
+  }
+  .btn:hover{ filter:brightness(1.08); }
+  .btn:active{ filter:brightness(0.95); }
+  #footer-hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-dim);
+    display:flex; gap:16px;
+  }
+  @media (max-width:480px){
+    #stage-wrap{ padding-top:58px; }
+    #stage-wrap::before{ top:34px; }
+    .hud-block{ padding:6px 10px; }
+    .hud-value{ font-size:16px; }
+    #overlay h1{ font-size:24px; }
+    #footer-hint{ font-size:9px; gap:10px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage-wrap">
+    <div id="hud">
+      <div class="hud-block" id="score-block">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="score-val">0</span>
+      </div>
+      <div class="hud-block" id="next-block">
+        <span class="hud-label">Next</span>
+        <canvas id="next-canvas" width="76" height="76"></canvas>
+      </div>
+      <div class="hud-block" id="best-block">
+        <span class="hud-label">Best</span>
+        <span class="hud-value" id="best-val">0</span>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <canvas id="game" width="380" height="560"></canvas>
+      <div id="overlay" class="show">
+        <h1 id="overlay-title">ORBIT</h1>
+        <p id="overlay-sub">Drop matching orbs to create larger worlds.<br>Keep the orbit below the danger line.</p>
+        <button class="btn" id="start-btn">Launch Orbit</button>
+      </div>
+    </div>
+
+    <div id="footer-hint">
+      <span>move to aim</span>
+      <span>click / tap to drop</span>
+      <span>match orbs to merge</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- CONFIG ----------
+  const CANVAS_W = 380, CANVAS_H = 560;
+  const WALL = 10;
+  const GRAVITY = 1500;             // px/s^2
+  const RESTITUTION = 0.22;         // bounciness on impact
+  const AIR_DRAG = 0.0012;
+  const BALL_FRICTION = 0.42;       // Coulomb friction, ball-ball contact
+  const FLOOR_FRICTION = 0.5;       // friction, ball-floor/wall contact
+  const ANGULAR_DAMPING = 0.996;
+  const PHYSICS_SUBSTEPS = 4;       // stability for stacking, no tunneling
+  const DROP_COOLDOWN = 0.3;
+  const DANGER_Y = 70;
+  const DANGER_HOLD = 2.2;
+  const MAX_BALLS = 170;
+
+  const TIERS = [
+    { r: 13, color: '#7dd8b0' },
+    { r: 17, color: '#7ec7e0' },
+    { r: 22, color: '#8fb4e8' },
+    { r: 28, color: '#a89be0' },
+    { r: 35, color: '#c48fd6' },
+    { r: 43, color: '#d98bb0' },
+    { r: 52, color: '#d98f7d' },
+    { r: 62, color: '#dba86e' },
+    { r: 73, color: '#d9c26a' },
+    { r: 85, color: '#c3d16a' },
+    { r: 98, color: '#a3d17e' },
+  ];
+  const SPAWNABLE_MAX_TIER = 3;
+
+  // ---------- DOM ----------
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const nextCanvas = document.getElementById('next-canvas');
+  const nctx = nextCanvas.getContext('2d');
+
+  // ---------- STATE ----------
+  let balls = [];
+  let particles = [];
+  let score = 0;
+  let best = 0;
+  try { best = parseInt(localStorage.getItem('orbit_best')||'0',10) || 0; } catch(e){ best = 0; }
+  document.getElementById('best-val').textContent = best;
+
+  let dropX = CANVAS_W/2;
+  let currentTier = randSpawnTier();
+  let nextTier = randSpawnTier();
+  let dropCooldown = 0;
+  let canDrop = true;
+  let gameOver = false;
+  let running = false;
+  let dangerTimer = 0;
+  let lastTime = null;
+  let idCounter = 1;
+
+  function randSpawnTier(){
+    const r = Math.random();
+    if (r < 0.45) return 0;
+    if (r < 0.75) return 1;
+    if (r < 0.92) return 2;
+    return SPAWNABLE_MAX_TIER;
+  }
+
+  // ---------- AUDIO (tiny synthesized cues, no assets) ----------
+  let actx = null;
+  function ensureAudio(){
+    if (!actx){ try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ actx = null; } }
+  }
+  function blip(freq, dur, type, gainVal){
+    if (!actx) return;
+    const t0 = actx.currentTime;
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, t0);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(40,freq*0.65), t0+dur);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(gainVal||0.15, t0+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.start(t0); osc.stop(t0+dur+0.02);
+  }
+  function sfxDrop(){ blip(220, 0.1, 'sine', 0.1); }
+  function sfxMerge(tier){ blip(260 + tier*40, 0.16, 'triangle', 0.18); }
+
+  // ---------- BALL ----------
+  function makeBall(x,y,tier,vx,vy){
+    return {
+      id: idCounter++,
+      x, y, vx: vx||0, vy: vy||0,
+      tier, r: TIERS[tier].r,
+      angVel: 0, rot: 0,
+      settleT: 0, squash: 0,
+      asleep: false
+    };
+  }
+
+  function spawnDropBall(){
+    if (gameOver || !canDrop) return;
+    ensureAudio();
+    const r = TIERS[currentTier].r;
+    const clampedX = Math.max(WALL+r, Math.min(CANVAS_W-WALL-r, dropX));
+    balls.push(makeBall(clampedX, r+16, currentTier, 0, 80));
+    sfxDrop();
+    canDrop = false;
+    dropCooldown = DROP_COOLDOWN;
+    currentTier = nextTier;
+    nextTier = randSpawnTier();
+    drawNextPreview();
+  }
+
+  function clampAbs(v, m){ return v > m ? m : (v < -m ? -m : v); }
+
+  // ---------- PHYSICS ----------
+  function step(dt){
+    dt = Math.min(dt, 1/30);
+    const sdt = dt / PHYSICS_SUBSTEPS;
+    for (let s=0; s<PHYSICS_SUBSTEPS; s++) physicsSubstep(sdt);
+
+    // danger check
+    let danger = false;
+    for (const b of balls){
+      if (b.settleT > 0.4 && (b.y - b.r) < DANGER_Y) { danger = true; break; }
+    }
+    if (danger){
+      dangerTimer += dt;
+      if (dangerTimer > DANGER_HOLD) triggerGameOver();
+    } else {
+      dangerTimer = Math.max(0, dangerTimer - dt*2);
+    }
+
+    if (!canDrop){
+      dropCooldown -= dt;
+      if (dropCooldown <= 0) canDrop = true;
+    }
+
+    for (const p of particles){
+      p.x += p.vx*dt; p.y += p.vy*dt;
+      p.vy += 700*dt;
+      p.life -= dt;
+    }
+    particles = particles.filter(p=>p.life>0);
+
+    if (balls.length > MAX_BALLS) balls.splice(0, balls.length-MAX_BALLS);
+  }
+
+  function physicsSubstep(dt){
+    // integrate
+    for (const b of balls){
+      b.vy += GRAVITY*dt;
+      b.vx *= (1 - AIR_DRAG);
+      b.vy *= (1 - AIR_DRAG);
+      b.x += b.vx*dt;
+      b.y += b.vy*dt;
+      b.angVel *= ANGULAR_DAMPING;
+
+      const mass = b.r*b.r;
+      const inertia = 0.5*mass*b.r*b.r; // solid-disk moment of inertia
+
+      // side walls
+      if (b.x - b.r < WALL){ b.x = WALL + b.r; b.vx *= -RESTITUTION; if (Math.abs(b.vx)>50) squashBall(b); }
+      if (b.x + b.r > CANVAS_W - WALL){ b.x = CANVAS_W - WALL - b.r; b.vx *= -RESTITUTION; if (Math.abs(b.vx)>50) squashBall(b); }
+
+      // floor — real rolling friction: converts sliding into spin until it rolls
+      if (b.y + b.r > CANVAS_H - WALL){
+        b.y = CANVAS_H - WALL - b.r;
+        if (b.vy > 40) squashBall(b);
+        b.vy *= -RESTITUTION;
+        if (Math.abs(b.vy) < 30) b.vy = 0;
+
+        const vt = b.vx + b.angVel*b.r;           // contact-point sliding speed
+        const jt = clampAbs(-vt*FLOOR_FRICTION, 260) * mass * dt * 6;
+        b.vx += jt/mass;
+        b.angVel -= jt*b.r/inertia;
+      }
+
+      if (b.squash > 0) b.squash -= dt*4;
+      if (b.squash < 0) b.squash = 0;
+      b.rot += b.angVel*dt;
+
+      const wasResting = b.settleT > 0;
+      if (Math.abs(b.vy) < 12 && Math.abs(b.vx) < 12 && Math.abs(b.angVel) < 0.4) b.settleT += dt;
+      else b.settleT = 0;
+    }
+
+    // ball-ball collisions with mass, friction and spin
+    const merges = [];
+    const mergedIds = new Set();
+    for (let i=0;i<balls.length;i++){
+      for (let j=i+1;j<balls.length;j++){
+        const a = balls[i], c = balls[j];
+        if (mergedIds.has(a.id) || mergedIds.has(c.id)) continue;
+        const dx = c.x-a.x, dy = c.y-a.y;
+        const dist = Math.sqrt(dx*dx+dy*dy) || 0.0001;
+        const minDist = a.r + c.r;
+        if (dist < minDist){
+          if (a.tier === c.tier && a.tier < TIERS.length-1){
+            merges.push([a,c]);
+            mergedIds.add(a.id); mergedIds.add(c.id);
+            continue;
+          }
+          const overlap = minDist - dist;
+          const nx = dx/dist, ny = dy/dist;
+          const totalR = a.r + c.r;
+          const slop = 0.4;
+          const corr = Math.max(0, overlap - slop) * 0.85;
+          a.x -= nx*corr*(c.r/totalR); a.y -= ny*corr*(c.r/totalR);
+          c.x += nx*corr*(a.r/totalR); c.y += ny*corr*(a.r/totalR);
+
+          const massA = a.r*a.r, massC = c.r*c.r;
+          const invA = 1/massA, invC = 1/massC;
+          const inA = 0.5*massA*a.r*a.r, inC = 0.5*massC*c.r*c.r;
+
+          const rvx = c.vx-a.vx, rvy = c.vy-a.vy;
+          const vAlongN = rvx*nx + rvy*ny;
+          if (vAlongN < 0){
+            const rest = RESTITUTION + 0.5;
+            const jimp = -(1+rest)*vAlongN / (invA+invC);
+            a.vx -= jimp*nx*invA; a.vy -= jimp*ny*invA;
+            c.vx += jimp*nx*invC; c.vy += jimp*ny*invC;
+            if (Math.abs(vAlongN) > 60){ squashBall(a); squashBall(c); }
+
+            const tx = -ny, ty = nx;
+            const rvx2 = c.vx-a.vx, rvy2 = c.vy-a.vy;
+            const vt = (rvx2*tx+rvy2*ty) - (a.angVel*a.r + c.angVel*c.r);
+            let jt = -vt / (invA+invC);
+            jt = clampAbs(jt, BALL_FRICTION*Math.abs(jimp));
+            a.vx -= jt*tx*invA; a.vy -= jt*ty*invA;
+            c.vx += jt*tx*invC; c.vy += jt*ty*invC;
+            a.angVel -= jt*a.r/inA;
+            c.angVel -= jt*c.r/inC;
+          }
+        }
+      }
+    }
+
+    for (const [a,c] of merges) doMerge(a,c);
+    balls = balls.filter(b => !b._dead);
+  }
+
+  function squashBall(b){ b.squash = Math.min(0.4, b.squash + 0.28); }
+
+  function doMerge(a,c){
+    a._dead = true; c._dead = true;
+    const newTier = Math.min(TIERS.length-1, a.tier+1);
+    const mx = (a.x+c.x)/2, my = (a.y+c.y)/2;
+    const nb = makeBall(mx, my, newTier, (a.vx+c.vx)/2*0.4, (a.vy+c.vy)/2*0.4);
+    nb.squash = 0.3;
+    balls.push(nb);
+
+    const gained = (newTier+1)*8;
+    score += gained;
+    document.getElementById('score-val').textContent = score;
+    if (score > best){
+      best = score;
+      document.getElementById('best-val').textContent = best;
+      try { localStorage.setItem('orbit_best', String(best)); } catch(e){}
+    }
+
+    spawnBurst(mx, my, TIERS[newTier].color, 7 + newTier);
+    sfxMerge(newTier);
+  }
+
+  function spawnBurst(x,y,color,count){
+    for (let i=0;i<count;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = 40 + Math.random()*100;
+      particles.push({
+        x,y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
+        life: 0.22+Math.random()*0.18, maxLife:0.4,
+        color, size: 1.2+Math.random()*1.6
+      });
+    }
+  }
+
+  function triggerGameOver(){
+    if (gameOver) return;
+    gameOver = true;
+    running = false;
+    const overlay = document.getElementById('overlay');
+    document.getElementById('overlay-title').textContent = 'Game Over';
+    document.getElementById('overlay-sub').innerHTML = 'Final score <b style="color:var(--accent)">'+score+'</b>' +
+      (score>=best ? '<br>new best' : '<br>best '+best);
+    document.getElementById('start-btn').textContent = 'Play Again';
+    overlay.classList.add('show');
+  }
+
+  // ---------- RENDER ----------
+  function drawBallShape(context, b){
+    const rx = b.r * (1 + b.squash*0.5);
+    const ry = b.r * (1 - b.squash*0.5);
+    const t = TIERS[b.tier];
+    context.save();
+    context.translate(b.x, b.y);
+    context.beginPath();
+    context.ellipse(0,0, rx, ry, 0, 0, Math.PI*2);
+    const grad = context.createRadialGradient(-rx*0.3,-ry*0.35, rx*0.1, 0,0, rx*1.05);
+    grad.addColorStop(0, shadeColor(t.color, 45));
+    grad.addColorStop(0.4, t.color);
+    grad.addColorStop(1, shadeColor(t.color, -28));
+    context.fillStyle = grad;
+    context.fill();
+    context.lineWidth = 1.2;
+    context.strokeStyle = 'rgba(255,255,255,0.15)';
+    context.stroke();
+
+    context.fillStyle = 'rgba(8,10,16,0.5)';
+    context.font = '600 ' + Math.max(9, b.r*0.6) + 'px Fredoka';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(String(b.tier+1), 0, 1);
+    context.restore();
+  }
+
+  function shadeColor(hex, percent){
+    const num = parseInt(hex.slice(1),16);
+    let r = (num>>16)+percent, g = ((num>>8)&0xff)+percent, b=(num&0xff)+percent;
+    r = Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+    return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+  }
+
+  function render(){
+    ctx.clearRect(0,0,CANVAS_W,CANVAS_H);
+
+    // danger line
+    const dangerAlpha = Math.min(1, dangerTimer/DANGER_HOLD);
+    ctx.strokeStyle = `rgba(220,90,90,${0.12+dangerAlpha*0.55})`;
+    ctx.setLineDash([5,6]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(WALL, DANGER_Y);
+    ctx.lineTo(CANVAS_W-WALL, DANGER_Y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    for (const p of particles){
+      const a = Math.max(0, p.life/p.maxLife);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    for (const b of balls) drawBallShape(ctx, b);
+
+    if (!gameOver){
+      const r = TIERS[currentTier].r;
+      const clampedX = Math.max(WALL+r, Math.min(CANVAS_W-WALL-r, dropX));
+      ctx.save();
+      ctx.globalAlpha = canDrop ? 0.8 : 0.3;
+      ctx.setLineDash([3,5]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.beginPath();
+      ctx.moveTo(clampedX, r+16);
+      ctx.lineTo(clampedX, CANVAS_H-WALL);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawBallShape(ctx, { x:clampedX, y:r+16, r, tier:currentTier, squash:0 });
+      ctx.restore();
+    }
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = WALL;
+    ctx.strokeRect(WALL/2, WALL/2, CANVAS_W-WALL, CANVAS_H-WALL);
+  }
+
+  function drawNextPreview(){
+    nctx.clearRect(0,0,76,76);
+    const t = TIERS[nextTier];
+    const r = Math.min(26, t.r*0.85);
+    nctx.save();
+    nctx.translate(38,38);
+    nctx.beginPath();
+    nctx.arc(0,0,r,0,Math.PI*2);
+    const grad = nctx.createRadialGradient(-r*0.3,-r*0.3,r*0.1,0,0,r*1.1);
+    grad.addColorStop(0, shadeColor(t.color,45));
+    grad.addColorStop(0.4, t.color);
+    grad.addColorStop(1, shadeColor(t.color,-28));
+    nctx.fillStyle = grad;
+    nctx.fill();
+    nctx.restore();
+  }
+
+  // ---------- LOOP ----------
+  function loop(ts){
+    if (lastTime === null) lastTime = ts;
+    const dt = (ts-lastTime)/1000;
+    lastTime = ts;
+    if (running && !gameOver) step(dt);
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- INPUT ----------
+  function pointerX(evt){
+    const rect = canvas.getBoundingClientRect();
+    const clientX = (evt.touches ? evt.touches[0].clientX : evt.clientX);
+    return (clientX - rect.left) * (CANVAS_W / rect.width);
+  }
+  canvas.addEventListener('mousemove', (e)=>{ dropX = pointerX(e); });
+  canvas.addEventListener('touchmove', (e)=>{ dropX = pointerX(e); e.preventDefault(); }, {passive:false});
+  canvas.addEventListener('touchstart', (e)=>{ dropX = pointerX(e); e.preventDefault(); }, {passive:false});
+  canvas.addEventListener('click', ()=>{ if(running && !gameOver) spawnDropBall(); });
+  canvas.addEventListener('touchend', (e)=>{ if(running && !gameOver) spawnDropBall(); e.preventDefault(); }, {passive:false});
+
+  document.getElementById('start-btn').addEventListener('click', ()=>{
+    ensureAudio();
+    resetGame();
+    document.getElementById('overlay').classList.remove('show');
+    running = true;
+  });
+
+  function resetGame(){
+    balls = []; particles = [];
+    score = 0;
+    document.getElementById('score-val').textContent = 0;
+    currentTier = randSpawnTier();
+    nextTier = randSpawnTier();
+    drawNextPreview();
+    canDrop = true;
+    dropCooldown = 0;
+    gameOver = false;
+    dangerTimer = 0;
+  }
+
+  drawNextPreview();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

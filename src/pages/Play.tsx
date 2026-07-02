@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Code, Gamepad2, Sparkles, Zap, Palette, Music, ArrowLeft } from 'lucide-react';
+import { Code, Gamepad2, Sparkles, Zap, Palette, Music, ArrowLeft, Orbit } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -13,6 +13,16 @@ const Play = () => {
   const navigate = useNavigate();
 
   const playItems = [
+    {
+      icon: Orbit,
+      title: 'Orbit Merge',
+      description: 'Drop celestial orbs, match their energy, and build the largest body your orbit can hold.',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
+      borderColor: 'border-accent/30',
+      link: '/play/orbit-merge',
+      featured: true,
+    },
     {
       icon: Zap,
       title: 'Nothing to Hide',
@@ -31,7 +41,7 @@ const Play = () => {
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/30',
       link: '/play/dead-philosophers',
-      featured: true,
+      featured: false,
     },
     {
       icon: Code,
